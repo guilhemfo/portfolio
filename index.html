@@ -1,0 +1,2074 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guilhem Fourrey — Portfolio Cyber & Ingénierie Système | EPITA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #050811;
+      --bg-surface: rgba(13, 20, 36, 0.72);
+      --bg-card: rgba(15, 23, 42, 0.65);
+      --bg-card-hover: rgba(22, 33, 58, 0.85);
+      --primary: #00f5d4;
+      --primary-dim: rgba(0, 245, 212, 0.14);
+      --secondary: #38bdf8;
+      --accent: #a855f7;
+      --warning: #f59e0b;
+      --danger: #f43f5e;
+      --success: #10b981;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border-subtle: rgba(148, 163, 184, 0.14);
+      --border-glow: rgba(0, 245, 212, 0.45);
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-deep);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+    }
+
+    body {
+      background-color: var(--bg-deep);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #050811;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 245, 212, 0.25);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary);
+    }
+
+    /* Top Scroll Progress Bar */
+    #scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+      z-index: 9999;
+      box-shadow: 0 0 12px var(--primary);
+      transition: width 0.08s ease-out;
+    }
+
+    /* Custom Cursor Glow */
+    #cursor-glow {
+      position: fixed;
+      width: 480px;
+      height: 480px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 245, 212, 0.08) 0%, rgba(56, 189, 248, 0.04) 40%, transparent 70%);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      transition: opacity 0.3s ease;
+    }
+
+    /* Background Canvas */
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Subtle Cyber Grid Overlay */
+    .cyber-grid {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(to right, rgba(148, 163, 184, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse at center, black 35%, transparent 85%);
+      -webkit-mask-image: radial-gradient(ellipse at center, black 35%, transparent 85%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Layout Container */
+    .container {
+      max-width: 1260px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Navigation Bar */
+    header {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 48px);
+      max-width: 1220px;
+      z-index: 1000;
+      background: rgba(8, 13, 26, 0.78);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      transition: all 0.3s ease;
+    }
+
+    header.scrolled {
+      border-color: rgba(0, 245, 212, 0.28);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65), 0 0 25px rgba(0, 245, 212, 0.08);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(0, 245, 212, 0.2), rgba(56, 189, 248, 0.2));
+      border: 1px solid var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 0.95rem;
+      box-shadow: 0 0 15px rgba(0, 245, 212, 0.25);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+      font-family: var(--font-sans);
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--primary);
+      background: var(--primary-dim);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #34d399;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.65; }
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 22px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid transparent;
+      font-family: var(--font-sans);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #00bbf9);
+      color: #040814;
+      box-shadow: 0 0 25px rgba(0, 245, 212, 0.35);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 35px rgba(0, 245, 212, 0.6);
+    }
+
+    .btn-outline {
+      background: rgba(15, 23, 42, 0.6);
+      color: var(--text-main);
+      border-color: var(--border-subtle);
+      backdrop-filter: blur(8px);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-dim);
+      transform: translateY(-2px);
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      padding-top: 125px;
+      padding-bottom: 60px;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 44px;
+      align-items: center;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--secondary);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 4.8vw, 4.3rem);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      margin-bottom: 18px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #ffffff 0%, var(--primary) 55%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .typewriter-line {
+      font-family: var(--font-mono);
+      font-size: 1.05rem;
+      color: var(--primary);
+      margin-bottom: 20px;
+      min-height: 1.6em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cursor-blink {
+      display: inline-block;
+      width: 9px;
+      height: 18px;
+      background: var(--primary);
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    .hero-desc {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 600px;
+      margin-bottom: 28px;
+    }
+
+    .hero-desc strong {
+      color: var(--text-main);
+    }
+
+    .hero-cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 36px;
+    }
+
+    .hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 14px 16px;
+      backdrop-filter: blur(12px);
+      transition: all 0.25s ease;
+    }
+
+    .metric-card:hover {
+      border-color: var(--border-glow);
+      transform: translateY(-3px);
+    }
+
+    .metric-value {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1.1;
+    }
+
+    .metric-label {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    /* Interactive Terminal Window */
+    .terminal-window {
+      background: rgba(9, 14, 26, 0.9);
+      border: 1px solid rgba(0, 245, 212, 0.3);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(0, 245, 212, 0.1);
+      backdrop-filter: blur(16px);
+      display: flex;
+      flex-direction: column;
+      height: 490px;
+    }
+
+    .terminal-header {
+      background: rgba(15, 23, 42, 0.95);
+      padding: 11px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .terminal-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .terminal-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #f43f5e; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+
+    .terminal-title {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .terminal-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 10px 14px;
+      background: rgba(15, 23, 42, 0.55);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .chip-cmd {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(0, 245, 212, 0.1);
+      border: 1px solid rgba(0, 245, 212, 0.25);
+      color: var(--primary);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .chip-cmd:hover {
+      background: var(--primary);
+      color: #050811;
+      font-weight: 700;
+    }
+
+    .terminal-body {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      line-height: 1.55;
+      color: #e2e8f0;
+    }
+
+    .term-line {
+      margin-bottom: 8px;
+      word-break: break-word;
+    }
+
+    .term-prompt {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .term-path {
+      color: var(--secondary);
+      font-weight: 700;
+    }
+
+    .term-output {
+      color: #cbd5e1;
+      white-space: pre-wrap;
+    }
+
+    .term-highlight {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .terminal-input-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: rgba(15, 23, 42, 0.75);
+      border-top: 1px solid var(--border-subtle);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+    }
+
+    #term-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+    }
+
+    /* Section Headers */
+    section {
+      padding: 90px 0;
+    }
+
+    .section-header {
+      margin-bottom: 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .section-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-eyebrow::before {
+      content: "//";
+      color: var(--secondary);
+      font-weight: 700;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.9rem, 3.2vw, 2.75rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .section-subtitle {
+      color: var(--text-muted);
+      max-width: 680px;
+      font-size: 1rem;
+    }
+
+    /* Interactive Projects & Live Labs */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 24px;
+    }
+
+    .project-card {
+      grid-column: span 6;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 28px;
+      backdrop-filter: blur(14px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease;
+    }
+
+    .project-card.featured {
+      grid-column: span 12;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .project-card:hover {
+      border-color: var(--border-glow);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 245, 212, 0.08);
+      transform: translateY(-4px);
+    }
+
+    .project-badge-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .project-category {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--primary);
+      background: var(--primary-dim);
+      padding: 4px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 245, 212, 0.3);
+      font-weight: 600;
+    }
+
+    .project-period {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .project-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--text-main);
+    }
+
+    .project-desc {
+      color: var(--text-muted);
+      font-size: 0.94rem;
+      margin-bottom: 18px;
+    }
+
+    .project-highlights {
+      list-style: none;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .project-highlights li {
+      font-size: 0.88rem;
+      color: #cbd5e1;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .project-highlights li::before {
+      content: "▹";
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    .tech-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .tech-pill {
+      font-family: var(--font-mono);
+      font-size: 0.73rem;
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: rgba(30, 41, 59, 0.75);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      color: #e2e8f0;
+    }
+
+    /* Interactive Demo Widget: OCR Solver Grid */
+    .interactive-lab {
+      background: rgba(7, 11, 22, 0.9);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .lab-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--secondary);
+    }
+
+    .ocr-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 5px;
+      margin-bottom: 14px;
+    }
+
+    .ocr-cell {
+      aspect-ratio: 1;
+      border-radius: 6px;
+      background: rgba(30, 41, 59, 0.65);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      transition: all 0.22s ease;
+      user-select: none;
+    }
+
+    .ocr-cell.scanning {
+      background: rgba(56, 189, 248, 0.28);
+      border-color: var(--secondary);
+      color: #fff;
+      transform: scale(1.06);
+    }
+
+    .ocr-cell.found {
+      background: rgba(0, 245, 212, 0.28);
+      border-color: var(--primary);
+      color: var(--primary);
+      box-shadow: 0 0 12px rgba(0, 245, 212, 0.45);
+      transform: scale(1.05);
+    }
+
+    .word-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .word-btn {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      padding: 5px 11px;
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .word-btn:hover,
+    .word-btn.solved {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-dim);
+    }
+
+    /* Interactive Demo Widget: Minimake DAG */
+    .dag-box {
+      background: rgba(7, 11, 22, 0.9);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .dag-nodes {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin: 14px 0;
+    }
+
+    .dag-tier {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .dag-node {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 8px 14px;
+      border-radius: 10px;
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      color: #cbd5e1;
+      transition: all 0.3s ease;
+    }
+
+    .dag-node.active {
+      background: rgba(0, 245, 212, 0.22);
+      border-color: var(--primary);
+      color: var(--primary);
+      box-shadow: 0 0 16px rgba(0, 245, 212, 0.35);
+      transform: translateY(-2px);
+    }
+
+    /* Skills Section: Radar + Filterable Bars */
+    .skills-layout {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 36px;
+      align-items: start;
+    }
+
+    .radar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 28px;
+      text-align: center;
+      backdrop-filter: blur(14px);
+    }
+
+    .filter-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+
+    .filter-tab {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      padding: 8px 15px;
+      border-radius: 10px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .filter-tab.active,
+    .filter-tab:hover {
+      background: var(--primary-dim);
+      border-color: var(--primary);
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .skills-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .skill-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 16px;
+      transition: all 0.25s ease;
+    }
+
+    .skill-item:hover {
+      border-color: var(--border-glow);
+      transform: translateY(-2px);
+    }
+
+    .skill-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .skill-name {
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+
+    .skill-level {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: var(--primary);
+    }
+
+    .skill-bar-bg {
+      height: 6px;
+      background: rgba(30, 41, 59, 0.9);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .skill-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 999px;
+      transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .skill-proof {
+      font-size: 0.77rem;
+      color: var(--text-muted);
+    }
+
+    /* Interactive Obsidian Knowledge Graph */
+    .graph-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 24px;
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    #knowledge-canvas {
+      width: 100%;
+      height: 380px;
+      background: rgba(5, 8, 17, 0.85);
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      cursor: grab;
+    }
+
+    #knowledge-canvas:active {
+      cursor: grabbing;
+    }
+
+    .node-inspector {
+      background: rgba(9, 14, 26, 0.85);
+      border: 1px solid rgba(0, 245, 212, 0.25);
+      border-radius: 14px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* Timeline & Experience */
+    .timeline-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+
+    .timeline-col {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 28px;
+    }
+
+    .timeline-col h3 {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--primary);
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-left: 24px;
+      padding-bottom: 24px;
+      border-left: 2px solid rgba(0, 245, 212, 0.25);
+    }
+
+    .timeline-item:last-child {
+      padding-bottom: 0;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -7px;
+      top: 4px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--bg-deep);
+      border: 2px solid var(--primary);
+      box-shadow: 0 0 10px var(--primary);
+    }
+
+    .tl-date {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--secondary);
+      margin-bottom: 4px;
+    }
+
+    .tl-title {
+      font-weight: 700;
+      font-size: 1.02rem;
+      color: var(--text-main);
+    }
+
+    .tl-place {
+      font-size: 0.84rem;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+
+    .tl-desc {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+    }
+
+    /* Contact & Footer */
+    .contact-card {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(8, 14, 28, 0.95));
+      border: 1px solid rgba(0, 245, 212, 0.35);
+      border-radius: 24px;
+      padding: 48px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 36px;
+      align-items: center;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6), 0 0 40px rgba(0, 245, 212, 0.08);
+    }
+
+    .contact-methods {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 14px 18px;
+      color: var(--text-main);
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .contact-item:hover {
+      border-color: var(--primary);
+      transform: translateX(4px);
+    }
+
+    .contact-item span.mono {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--primary);
+    }
+
+    footer {
+      padding: 36px 0;
+      text-align: center;
+      border-top: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-family: var(--font-mono);
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .project-card.featured,
+      .skills-layout,
+      .graph-container,
+      .timeline-grid,
+      .contact-card {
+        grid-template-columns: 1fr;
+      }
+      .project-card {
+        grid-column: span 12;
+      }
+      .hero-metrics,
+      .skills-list {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .nav-links {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="scroll-progress"></div>
+  <div id="cursor-glow"></div>
+  <canvas id="bg-canvas"></canvas>
+  <div class="cyber-grid"></div>
+
+  <!-- Navigation -->
+  <header id="navbar">
+    <a href="#top" class="brand">
+      <div class="brand-badge">GF</div>
+      <div>
+        <div>Guilhem FOURREY</div>
+        <div style="font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono); font-weight: 400;">EPITA 2030 · CYBER & SYSTÈMES</div>
+      </div>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#projets">Projets & Labs</a></li>
+      <li><a href="#competences">Compétences</a></li>
+      <li><a href="#graphe">Graphe Obsidian</a></li>
+      <li><a href="#parcours">Parcours & Valeurs</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <div class="status-pill">
+        <span class="status-dot"></span>
+        <span>Alternance Pentest · Sept. 2027</span>
+      </div>
+      <a href="CV_Guilhem_Fourrey_Pentest.pdf" download class="btn btn-primary" style="padding: 8px 16px; font-size: 0.82rem;">
+        ↓ CV PDF
+      </a>
+    </div>
+  </header>
+
+  <main class="container" id="top">
+    <!-- HERO SECTION -->
+    <section class="hero">
+      <div>
+        <div class="hero-tag">
+          <span>⚡</span>
+          <span>EPITA Toulouse · Cycle Préparatoire 2e année (S3)</span>
+        </div>
+
+        <h1>
+          Ingénierie Bas Niveau &amp; <span class="gradient-text">Sécurité Offensive</span>
+        </h1>
+
+        <div class="typewriter-line">
+          <span>&gt;</span>
+          <span id="typewriter"></span>
+          <span class="cursor-blink"></span>
+        </div>
+
+        <p class="hero-desc">
+          Étudiant ingénieur à l'<strong>EPITA Toulouse</strong>, passionné par ce qui se passe sous le capot : gestion mémoire en <strong>C99 POSIX</strong>, registres <strong>Assembleur 68000</strong>, architecture réseau TCP/IP et <strong>tests d'intrusion (Pentest)</strong>. En recherche active d'une <strong>alternance de 3 ans en Sécurité Offensive dès Septembre 2027</strong>.
+        </p>
+
+        <div class="hero-cta">
+          <a href="#projets" class="btn btn-primary">Explorer mes Projets Interactifs →</a>
+          <a href="CV_Guilhem_Fourrey_Pentest.pdf" target="_blank" class="btn btn-outline">Consulter mon CV Pentest</a>
+          <a href="#contact" class="btn btn-outline">Me Contacter</a>
+        </div>
+
+        <div class="hero-metrics">
+          <div class="metric-card">
+            <div class="metric-value" data-count="8741">8 741</div>
+            <div class="metric-label">Lignes Python (Projet SMILE)</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">0 Fuite</div>
+            <div class="metric-label">Audit Mémoire Valgrind (C99)</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">3 Ans</div>
+            <div class="metric-label">Alternance Cyber (Sept. 2027)</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">24/7</div>
+            <div class="metric-label">Homelab Debian &amp; WireGuard</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INTERACTIVE SHELL -->
+      <div class="terminal-window">
+        <div class="terminal-header">
+          <div class="terminal-dots">
+            <span class="terminal-dot dot-red"></span>
+            <span class="terminal-dot dot-yellow"></span>
+            <span class="terminal-dot dot-green"></span>
+          </div>
+          <div class="terminal-title">guilhem@epita-pentest:~ (zsh)</div>
+          <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--primary);">INTERACTIF</div>
+        </div>
+
+        <div class="terminal-chips">
+          <button class="chip-cmd" onclick="runTerminalCmd('whoami')">whoami</button>
+          <button class="chip-cmd" onclick="runTerminalCmd('projects')">projects</button>
+          <button class="chip-cmd" onclick="runTerminalCmd('skills')">skills</button>
+          <button class="chip-cmd" onclick="runTerminalCmd('nmap')">nmap homelab</button>
+          <button class="chip-cmd" onclick="runTerminalCmd('valgrind')">valgrind ./solver</button>
+          <button class="chip-cmd" onclick="runTerminalCmd('contact')">contact</button>
+          <button class="chip-cmd" onclick="runTerminalCmd('clear')">clear</button>
+        </div>
+
+        <div class="terminal-body" id="term-body" onclick="document.getElementById('term-input').focus()">
+          <div class="term-line">
+            <span class="term-output" style="color: var(--primary);">╭──────────────────────────────────────────────────────────╮
+│  GUILHEM FOURREY — SHELL INTERACTIF CYBERSÉCURITÉ v2.6   │
+│  Cliquez sur un bouton ci-dessus ou tapez 'help'         │
+╰──────────────────────────────────────────────────────────╯</span>
+          </div>
+        </div>
+
+        <div class="terminal-input-row">
+          <span class="term-prompt">guilhem@epita</span>:<span class="term-path">~</span>$
+          <input type="text" id="term-input" placeholder="Tapez une commande (help, whoami, projects, nmap, skills...)" autocomplete="off" />
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS & LIVE LABS SECTION -->
+    <section id="projets">
+      <div class="section-header">
+        <div class="section-eyebrow">Réalisations Vérifiables & Simulateurs en Direct</div>
+        <h2 class="section-title">Projets Phares &amp; Laboratoires Techniques</h2>
+        <p class="section-subtitle">
+          Chaque projet est conçu avec une exigence stricte de qualité système. Testez directement ci-dessous mes algorithmes en C99 (OCR Solver et Minimake DAG) dans le navigateur.
+        </p>
+      </div>
+
+      <div class="projects-grid">
+        <!-- FEATURED 1: OCR WORD SEARCH SOLVER + LIVE DEMO -->
+        <div class="project-card featured">
+          <div>
+            <div class="project-badge-row">
+              <span class="project-category">C99 Bas Niveau · Réseau de Neurones · Algorithmique</span>
+              <span class="project-period">EPITA S3 · 2026</span>
+            </div>
+            <h3 class="project-title">OCR Word Search Solver — Résolution Vectorielle en C</h3>
+            <p class="project-desc">
+              Conception et développement en C99 du module <strong>Solver</strong> au sein d'une chaîne complète de reconnaissance optique de caractères (prétraitement d'image, réseau de neurones en C, interface graphique).
+            </p>
+            <ul class="project-highlights">
+              <li>Exploration matricielle en <strong>8 directions vectorielles</strong> $(dx, dy) \in \{-1, 0, 1\}^2 \setminus \{(0,0)\}$ avec court-circuitage sur les bornes.</li>
+              <li>Allocation mémoire dynamique stricte (<code>malloc</code>, <code>realloc</code>, <code>getline</code>) sans aucun dépassement de tampon.</li>
+              <li>Validation <strong>0 fuite mémoire sous Valgrind</strong> et compilation stricte <code>-Wall -Wextra -Werror -pedantic</code>.</li>
+            </ul>
+            <div class="tech-stack">
+              <span class="tech-pill">C99</span>
+              <span class="tech-pill">Pointeurs &amp; Mémoire</span>
+              <span class="tech-pill">Valgrind</span>
+              <span class="tech-pill">GCC</span>
+              <span class="tech-pill">Algorithmique 2D</span>
+            </div>
+          </div>
+
+          <!-- LIVE INTERACTIVE OCR GRID -->
+          <div class="interactive-lab">
+            <div class="lab-header">
+              <span>⚡ DÉMO LIVE : cliquez sur un mot pour lancer solver.c</span>
+              <span id="ocr-coords" style="color: var(--primary);">Prêt</span>
+            </div>
+            <div class="ocr-grid" id="ocr-grid"></div>
+            <div class="word-buttons">
+              <button class="word-btn" onclick="solveWord('PENTEST')">PENTEST</button>
+              <button class="word-btn" onclick="solveWord('EPITA')">EPITA</button>
+              <button class="word-btn" onclick="solveWord('KERNEL')">KERNEL</button>
+              <button class="word-btn" onclick="solveWord('SOCKET')">SOCKET</button>
+              <button class="word-btn" onclick="solveWord('POSIX')">POSIX</button>
+              <button class="word-btn" onclick="solveWord('LINUX')">LINUX</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- FEATURED 2: MINIMAKE + DAG SIMULATOR -->
+        <div class="project-card featured">
+          <div>
+            <div class="project-badge-row">
+              <span class="project-category">Programmation Système POSIX · C99</span>
+              <span class="project-period">EPITA S2 · 2026</span>
+            </div>
+            <h3 class="project-title">Minimake — Réimplémentation de GNU Make en C</h3>
+            <p class="project-desc">
+              Reconstruction complète en C99 de l'outil d'automatisation de compilation Unix <code>make</code> avec résolution récursive d'arbre de dépendances et ordonnancement de processus POSIX.
+            </p>
+            <ul class="project-highlights">
+              <li>Analyse lexicale et syntaxique de fichiers <code>Makefile</code> (variables, règles, cibles, dépendances) et détection des cycles dans le graphe orienté acyclique (DAG).</li>
+              <li>Comparaison des horodatages système via <code>stat(2)</code> et exécution isolée des commandes via <code>fork(2)</code>, <code>execvp(3)</code> et <code>waitpid(2)</code>.</li>
+              <li>Compréhension approfondie du cycle de vie des processus Unix et des descripteurs de fichiers.</li>
+            </ul>
+            <div class="tech-stack">
+              <span class="tech-pill">C99</span>
+              <span class="tech-pill">POSIX API</span>
+              <span class="tech-pill">fork / execvp / waitpid</span>
+              <span class="tech-pill">Graphe DAG</span>
+              <span class="tech-pill">Valgrind</span>
+            </div>
+          </div>
+
+          <!-- LIVE DAG SIMULATOR -->
+          <div class="dag-box">
+            <div class="lab-header">
+              <span style="color: #c084fc;">⚙️ SIMULATEUR DAG : Ordonnancement Minimake</span>
+              <button class="chip-cmd" onclick="runDagSimulation()">▶ Exécuter `minimake all`</button>
+            </div>
+            <div class="dag-nodes">
+              <div class="dag-tier">
+                <div class="dag-node" id="dag-0">parse.c</div>
+                <div class="dag-node" id="dag-1">graph.c</div>
+                <div class="dag-node" id="dag-2">exec.c</div>
+              </div>
+              <div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; font-family: var(--font-mono);">↓ stat() + fork() + execvp("gcc -c")</div>
+              <div class="dag-tier">
+                <div class="dag-node" id="dag-3">parse.o</div>
+                <div class="dag-node" id="dag-4">graph.o</div>
+                <div class="dag-node" id="dag-5">exec.o</div>
+              </div>
+              <div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; font-family: var(--font-mono);">↓ waitpid() == 0 → Linker</div>
+              <div class="dag-tier">
+                <div class="dag-node" id="dag-6" style="font-weight: 700;">🎯 Cible finale : ./minimake (PID complet)</div>
+              </div>
+            </div>
+            <div id="dag-status" style="font-family: var(--font-mono); font-size: 0.76rem; color: var(--primary); text-align: center; min-height: 1.4em;">
+              Cliquez sur « Exécuter minimake all » pour visualiser le parcours post-ordre du DAG.
+            </div>
+          </div>
+        </div>
+
+        <!-- PROJECT 3: THE JOURNEY TO LAPUTA (POSIX THREADS) -->
+        <div class="project-card">
+          <div>
+            <div class="project-badge-row">
+              <span class="project-category">Concurrence &amp; Synchronisation POSIX</span>
+              <span class="project-period">EPITA S3 · 2026</span>
+            </div>
+            <h3 class="project-title">The Journey to Laputa — Moteur Temps Réel Multithreadé</h3>
+            <p class="project-desc">
+              Architecture concurrente en C99 mettant en œuvre des threads POSIX simultanés (affichage 50 ms, IA adverse temporisée, file producteur-consommateur d'ordres et tirs de canons).
+            </p>
+            <ul class="project-highlights">
+              <li>Synchronisation fine sans interblocage (<em>deadlock-free</em>) avec hiérarchie de <code>pthread_mutex_t</code>, <code>pthread_cond_timedwait</code> et sémaphores <code>sem_t</code>.</li>
+              <li>Construction modulaire multi-dossiers pilotée par <code>CMake</code> en standard C99 strict.</li>
+            </ul>
+          </div>
+          <div class="tech-stack">
+            <span class="tech-pill">pthreads</span>
+            <span class="tech-pill">Mutex &amp; CondVars</span>
+            <span class="tech-pill">Semaphores</span>
+            <span class="tech-pill">CMake</span>
+            <span class="tech-pill">C99</span>
+          </div>
+        </div>
+
+        <!-- PROJECT 4: SMILE (8741 LOC PYTHON MULTIPLAYER) -->
+        <div class="project-card">
+          <div>
+            <div class="project-badge-row">
+              <span class="project-category">Réseau TCP/IP &amp; Architecture Logicielle</span>
+              <span class="project-period">Projet Équipe · 2026</span>
+            </div>
+            <h3 class="project-title">SMILE — Jeu 2D Coopératif en Réseau (8 741 lignes)</h3>
+            <p class="project-desc">
+              Co-développement d'un jeu multijoueur temps réel en Python/Pygame structuré selon le patron Modèle-Vue-Contrôleur (MVC) cadencé à 60 FPS.
+            </p>
+            <ul class="project-highlights">
+              <li>Conception d'un protocole client-serveur sur mesure par <strong>sockets TCP</strong> (<code>AF_INET, SOCK_STREAM</code>) avec sérialisation JSON.</li>
+              <li>Gestion de la fragmentation des flux réseau et interpolation linéaire côté client pour compenser la gigue.</li>
+            </ul>
+          </div>
+          <div class="tech-stack">
+            <span class="tech-pill">Python 3</span>
+            <span class="tech-pill">Sockets TCP</span>
+            <span class="tech-pill">JSON Protocol</span>
+            <span class="tech-pill">MVC</span>
+            <span class="tech-pill">Git Collaboratif</span>
+          </div>
+        </div>
+
+        <!-- PROJECT 5: HOMELAB DEBIAN & PENTEST LAB -->
+        <div class="project-card" style="grid-column: span 12;">
+          <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 28px; align-items: center;">
+            <div>
+              <div class="project-badge-row">
+                <span class="project-category">Sécurité Offensive &amp; Infrastructure Durcie</span>
+                <span class="project-period">Projet Personnel Continu</span>
+              </div>
+              <h3 class="project-title">Homelab Linux Debian &amp; Entraînement Pentest (TryHackMe / Root-Me)</h3>
+              <p class="project-desc">
+                Administration d'un serveur personnel Debian dédié à l'expérimentation système/réseau et à la reproduction contrôlée de vulnérabilités (CVE) en environnement isolé.
+              </p>
+              <ul class="project-highlights">
+                <li><strong>Hardening &amp; Isolation :</strong> Conteneurisation Docker avec réseaux bridges cloisonnés, principe de moindre privilège et accès distant exclusivement via VPN maillé chiffré <strong>WireGuard / Tailscale</strong> (0 port public exposé sur Internet).</li>
+                <li><strong>Pratique Offensive :</strong> Reconnaissance et énumération (<code>nmap</code>), analyse de trames (<code>Wireshark</code>), sécurité Web (OWASP Top 10, SQLi, XSS, Burp Suite) et élévation de privilèges Linux/Windows.</li>
+              </ul>
+              <div class="tech-stack">
+                <span class="tech-pill">Debian Linux</span>
+                <span class="tech-pill">WireGuard / Tailscale</span>
+                <span class="tech-pill">Docker Hardening</span>
+                <span class="tech-pill">TryHackMe &amp; Root-Me</span>
+                <span class="tech-pill">Nmap / Wireshark / Burp</span>
+              </div>
+            </div>
+            <div style="background: rgba(5, 8, 17, 0.85); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 14px; padding: 20px; font-family: var(--font-mono); font-size: 0.78rem; color: #cbd5e1;">
+              <div style="color: #10b981; font-weight: 700; margin-bottom: 10px;">🛡️ ARCHITECTURE HOMELAB ZERO-TRUST</div>
+              <pre style="white-space: pre-wrap; line-height: 1.45; color: #94a3b8;">[Poste Arch/Fedora Hyprland]
+       │
+       ▼ Tunnel Chiffré (WireGuard / Tailscale)
+[ Passerelle Homelab Debian 12 ] (0 port WAN ouvert)
+  ├── 🐳 net-lab-isolated (Cibles CVE / CTF)
+  ├── 🐳 net-services (Auto-hébergement non-root)
+  └──📓 Vault Obsidian (Write-ups &amp; Post-mortems)</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS & RADAR SECTION -->
+    <section id="competences">
+      <div class="section-header">
+        <div class="section-eyebrow">Cartographie Technique &amp; Réflexive</div>
+        <h2 class="section-title">Compétences &amp; Preuves de Maîtrise</h2>
+        <p class="section-subtitle">
+          Une approche honnête et vérifiable : chaque compétence est rattachée à des réalisations concrètes effectuées à l'EPITA ou sur mon laboratoire personnel.
+        </p>
+      </div>
+
+      <div class="skills-layout">
+        <!-- SVG RADAR CHART -->
+        <div class="radar-card">
+          <div style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--primary); margin-bottom: 12px;">
+            PROFIL MULTIDIMENSIONNEL (S3 EPITA)
+          </div>
+          <svg viewBox="0 0 320 300" style="width: 100%; max-width: 320px; height: auto;">
+            <!-- Radar Grid Polygons -->
+            <g stroke="rgba(148, 163, 184, 0.2)" fill="none" stroke-width="1">
+              <polygon points="160,30 272,95 272,205 160,270 48,205 48,95" />
+              <polygon points="160,65 242,112 242,188 160,235 78,188 78,112" />
+              <polygon points="160,100 212,130 212,170 160,200 108,170 108,130" />
+              <line x1="160" y1="150" x2="160" y2="30" />
+              <line x1="160" y1="150" x2="272" y2="95" />
+              <line x1="160" y1="150" x2="272" y2="205" />
+              <line x1="160" y1="150" x2="160" y2="270" />
+              <line x1="160" y1="150" x2="48" y2="205" />
+              <line x1="160" y1="150" x2="48" y2="95" />
+            </g>
+            <!-- Data Polygon -->
+            <polygon
+              points="160,42 256,104 248,196 160,255 68,195 65,102"
+              fill="rgba(0, 245, 212, 0.18)"
+              stroke="#00f5d4"
+              stroke-width="2.5"
+            />
+            <!-- Data Points -->
+            <circle cx="160" cy="42" r="4.5" fill="#00f5d4" />
+            <circle cx="256" cy="104" r="4.5" fill="#38bdf8" />
+            <circle cx="248" cy="196" r="4.5" fill="#00f5d4" />
+            <circle cx="160" cy="255" r="4.5" fill="#38bdf8" />
+            <circle cx="68" cy="195" r="4.5" fill="#00f5d4" />
+            <circle cx="65" cy="102" r="4.5" fill="#38bdf8" />
+            <!-- Labels -->
+            <text x="160" y="18" text-anchor="middle" fill="#f1f5f9" font-size="10" font-family="JetBrains Mono" font-weight="700">C99 / POSIX</text>
+            <text x="282" y="92" text-anchor="start" fill="#f1f5f9" font-size="9.5" font-family="JetBrains Mono">Linux &amp; Réseau</text>
+            <text x="282" y="212" text-anchor="start" fill="#f1f5f9" font-size="9.5" font-family="JetBrains Mono">Pentest / CTF</text>
+            <text x="160" y="288" text-anchor="middle" fill="#f1f5f9" font-size="10" font-family="JetBrains Mono" font-weight="700">Rigueur &amp; Équipe</text>
+            <text x="38" y="212" text-anchor="end" fill="#f1f5f9" font-size="9.5" font-family="JetBrains Mono">ASM 68k</text>
+            <text x="38" y="92" text-anchor="end" fill="#f1f5f9" font-size="9.5" font-family="JetBrains Mono">Python / POO</text>
+          </svg>
+          <p style="font-size: 0.84rem; color: var(--text-muted); margin-top: 12px;">
+            Alliance entre fondations bas niveau (mémoire, registres, appels système) et méthodologie d'audit offensif.
+          </p>
+        </div>
+
+        <!-- FILTERABLE SKILLS LIST -->
+        <div>
+          <div class="filter-tabs">
+            <button class="filter-tab active" onclick="filterSkills('all', this)">Toutes</button>
+            <button class="filter-tab" onclick="filterSkills('cyber', this)">Sécurité Offensive</button>
+            <button class="filter-tab" onclick="filterSkills('sys', this)">Systèmes &amp; Réseau</button>
+            <button class="filter-tab" onclick="filterSkills('dev', this)">Développement Bas Niveau</button>
+          </div>
+
+          <div class="skills-list" id="skills-container"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTERACTIVE OBSIDIAN KNOWLEDGE GRAPH -->
+    <section id="graphe">
+      <div class="section-header">
+        <div class="section-eyebrow">Personal Knowledge Management (Obsidian)</div>
+        <h2 class="section-title">Graphe Interactif de Connaissances &amp; Write-Ups</h2>
+        <p class="section-subtitle">
+          Un problème non documenté est une leçon perdue. Cliquez ou déplacez les nœuds de mon graphe Obsidian ci-dessous pour inspecter mes fiches techniques et post-mortems.
+        </p>
+      </div>
+
+      <div class="graph-container">
+        <canvas id="knowledge-canvas" width="720" height="380"></canvas>
+        <div class="node-inspector">
+          <div>
+            <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--primary); margin-bottom: 6px;">
+              FICHE OBSIDIAN SÉLECTIONNÉE
+            </div>
+            <h3 id="node-title" style="font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 10px;">
+              Sécurité Offensive &amp; Pentest
+            </h3>
+            <p id="node-body" style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">
+              Méthodologie structurée d'audit : reconnaissance active/passive (Nmap), analyse de surface d'attaque Web (OWASP Top 10, Burp Suite), compréhension des corruptions mémoire (pile, registres) et élévation de privilèges Linux/Windows.
+            </p>
+            <div id="node-tags" class="tech-stack">
+              <span class="tech-pill">#TryHackMe</span>
+              <span class="tech-pill">#Root-Me</span>
+              <span class="tech-pill">#OWASP</span>
+              <span class="tech-pill">#PASSI</span>
+            </div>
+          </div>
+          <div style="font-family: var(--font-mono); font-size: 0.74rem; color: var(--secondary); margin-top: 20px; border-top: 1px solid var(--border-subtle); padding-top: 12px;">
+            💡 Astuce : Cliquez sur un nœud du graphe ou faites-le glisser avec la souris.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TIMELINE, EXPERIENCE & VALUES -->
+    <section id="parcours">
+      <div class="section-header">
+        <div class="section-eyebrow">Formation, Terrain Industriel &amp; Engagement Sportif</div>
+        <h2 class="section-title">Parcours Académique &amp; Expériences Humaines</h2>
+        <p class="section-subtitle">
+          La technique pure ne suffit pas : mon passage en atelier industriel chez SAREM et ma pratique du Rugby et du coaching sportif forgent ma rigueur opérationnelle et mon esprit d'équipe.
+        </p>
+      </div>
+
+      <div class="timeline-grid">
+        <!-- Formation & Feuille de route -->
+        <div class="timeline-col">
+          <h3>🎓 Cursus &amp; Feuille de Route Cyber</h3>
+          <div class="timeline-item">
+            <div class="tl-date">Sept. 2027 – 2030 (Objectif)</div>
+            <div class="tl-title">Cycle Ingénieur EPITA — Majeure Cybersécurité en Alternance</div>
+            <div class="tl-place">Contrat d'apprentissage de 3 ans · Pentest / Sécurité Offensive</div>
+            <div class="tl-desc">Montée en compétences opérationnelle au sein d'une équipe d'audit (PASSI / Red Team) en parallèle du cycle ingénieur.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="tl-date">Sept. 2025 – Présent</div>
+            <div class="tl-title">EPITA Toulouse — Cycle Préparatoire (2e année S3)</div>
+            <div class="tl-place">Toulouse · Promotion 2030</div>
+            <div class="tl-desc">C99 POSIX, Assembleur Motorola 68000, Threads &amp; Synchronisation, Python POO &amp; Réseau, OCaml, Algorithmique des graphes et Mathématiques de l'ingénieur.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="tl-date">Juillet 2025</div>
+            <div class="tl-title">Baccalauréat Général</div>
+            <div class="tl-place">Bayonne · Spécialités Mathématiques &amp; NSI</div>
+            <div class="tl-desc">Option Mathématiques Expertes (arithmétique modulaire, matrices, graphes).</div>
+          </div>
+        </div>
+
+        <!-- Expérience & Valeurs -->
+        <div class="timeline-col">
+          <h3>⚡ Expériences Terrain &amp; Engagements</h3>
+          <div class="timeline-item">
+            <div class="tl-date">Été 2026</div>
+            <div class="tl-title">Agent de Manutention en Chaudronnerie Industrielle</div>
+            <div class="tl-place">SAREM (Chaudronnerie, métallerie &amp; tuyauterie) · Anglet</div>
+            <div class="tl-desc">
+              Approvisionnement des postes, ébavurage, ponçage et logistique lourde. <strong>Parallèle Pentest :</strong> en usine comme en audit d'intrusion, le respect strict des protocoles de sécurité (EPI / périmètre légal d'audit) est non négociable.
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="tl-date">Engagement Associatif</div>
+            <div class="tl-title">Coach de Basket-ball — Encadrement Sportif</div>
+            <div class="tl-place">Club sportif</div>
+            <div class="tl-desc">
+              Animation des entraînements, transmission pédagogique des consignes tactiques, prise de parole claire et cohésion de groupe en compétition.
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="tl-date">Pratique Régulière</div>
+            <div class="tl-title">Rugby en Club, Aviron &amp; Musculation</div>
+            <div class="tl-place">Esprit de corps, solidarité &amp; sang-froid</div>
+            <div class="tl-desc">
+              Travail de l'ombre au service du collectif, respect absolu des règles et de l'arbitre (éthique et déontologie), lucidité sous pression.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section id="contact">
+      <div class="contact-card">
+        <div>
+          <div class="section-eyebrow" style="margin-bottom: 10px;">Prêt pour Septembre 2027</div>
+          <h2 style="font-family: var(--font-display); font-size: clamp(1.8rem, 3vw, 2.5rem); font-weight: 800; margin-bottom: 14px;">
+            Construisons ensemble vos prochains audits de sécurité.
+          </h2>
+          <p style="color: var(--text-muted); margin-bottom: 24px; font-size: 0.98rem;">
+            Vous recherchez un apprenti pentesteur humble, rigoureux, formé au bas niveau à l'EPITA et investi pour <strong>3 ans d'alternance dès septembre 2027</strong> ? Échangeons !
+          </p>
+          <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+            <a href="mailto:guilhem.fourrey@epita.fr" class="btn btn-primary">✉ Envoyer un Courriel</a>
+            <a href="CV_Guilhem_Fourrey_Pentest.pdf" download class="btn btn-outline">↓ Télécharger mon CV (PDF)</a>
+          </div>
+        </div>
+
+        <div class="contact-methods">
+          <a href="mailto:guilhem.fourrey@epita.fr" class="contact-item">
+            <span>Courriel Académique</span>
+            <span class="mono">guilhem.fourrey@epita.fr</span>
+          </a>
+          <a href="tel:+33613212128" class="contact-item">
+            <span>Téléphone</span>
+            <span class="mono">06 13 21 21 28</span>
+          </a>
+          <a href="https://github.com/guilhemfo" target="_blank" rel="noopener" class="contact-item">
+            <span>GitHub</span>
+            <span class="mono">github.com/guilhemfo ↗</span>
+          </a>
+          <div class="contact-item">
+            <span>Mobilité Géographique</span>
+            <span class="mono">Toulouse · Bayonne · France</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      Guilhem FOURREY · Portfolio Numérique Interactif · EPITA Promotion 2030 · Sécurité Offensive &amp; Ingénierie Système
+    </div>
+  </footer>
+
+  <script>
+    // 1. Scroll Progress & Navbar style
+    window.addEventListener('scroll', () => {
+      const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+      document.getElementById('scroll-progress').style.width = scrolled + '%';
+      document.getElementById('navbar').classList.toggle('scrolled', winScroll > 30);
+    });
+
+    // 2. Cursor Glow Tracking
+    const cursorGlow = document.getElementById('cursor-glow');
+    window.addEventListener('mousemove', (e) => {
+      cursorGlow.style.left = e.clientX + 'px';
+      cursorGlow.style.top = e.clientY + 'px';
+    });
+
+    // 3. Typewriter Effect in Hero
+    const roles = [
+      "Recherche Alternance Pentest (3 ans) — Septembre 2027",
+      "Programmation Système C99, POSIX Threads & Assembleur 68000",
+      "Sécurité Offensive, TryHackMe, Root-Me & Homelab Debian",
+      "Architecture Réseau TCP/IP, Docker & VPN WireGuard"
+    ];
+    let roleIdx = 0, charIdx = 0, deleting = false;
+    const typeEl = document.getElementById('typewriter');
+
+    function tickTypewriter() {
+      const current = roles[roleIdx];
+      if (!deleting) {
+        charIdx++;
+        typeEl.textContent = current.slice(0, charIdx);
+        if (charIdx === current.length) {
+          deleting = true;
+          setTimeout(tickTypewriter, 2200);
+          return;
+        }
+        setTimeout(tickTypewriter, 38);
+      } else {
+        charIdx--;
+        typeEl.textContent = current.slice(0, charIdx);
+        if (charIdx === 0) {
+          deleting = false;
+          roleIdx = (roleIdx + 1) % roles.length;
+          setTimeout(tickTypewriter, 300);
+          return;
+        }
+        setTimeout(tickTypewriter, 20);
+      }
+    }
+    tickTypewriter();
+
+    // 4. Interactive Background Particle Network Canvas
+    const bgCanvas = document.getElementById('bg-canvas');
+    const bgCtx = bgCanvas.getContext('2d');
+    let particles = [];
+    let mouse = { x: -1000, y: -1000 };
+
+    function resizeBg() {
+      bgCanvas.width = window.innerWidth;
+      bgCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeBg);
+    resizeBg();
+
+    window.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+
+    for (let i = 0; i < 65; i++) {
+      particles.push({
+        x: Math.random() * bgCanvas.width,
+        y: Math.random() * bgCanvas.height,
+        vx: (Math.random() - 0.5) * 0.45,
+        vy: (Math.random() - 0.5) * 0.45,
+        r: Math.random() * 1.8 + 0.8
+      });
+    }
+
+    function animateBg() {
+      bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > bgCanvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > bgCanvas.height) p.vy *= -1;
+
+        bgCtx.beginPath();
+        bgCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        bgCtx.fillStyle = 'rgba(0, 245, 212, 0.45)';
+        bgCtx.fill();
+
+        for (let j = i + 1; j < particles.length; j++) {
+          const q = particles[j];
+          const dx = p.x - q.x, dy = p.y - q.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 135) {
+            bgCtx.beginPath();
+            bgCtx.moveTo(p.x, p.y);
+            bgCtx.lineTo(q.x, q.y);
+            bgCtx.strokeStyle = `rgba(56, 189, 248, ${(1 - dist / 135) * 0.16})`;
+            bgCtx.lineWidth = 1;
+            bgCtx.stroke();
+          }
+        }
+
+        const mdx = p.x - mouse.x, mdy = p.y - mouse.y;
+        const mdist = Math.hypot(mdx, mdy);
+        if (mdist < 170) {
+          bgCtx.beginPath();
+          bgCtx.moveTo(p.x, p.y);
+          bgCtx.lineTo(mouse.x, mouse.y);
+          bgCtx.strokeStyle = `rgba(0, 245, 212, ${(1 - mdist / 170) * 0.35})`;
+          bgCtx.lineWidth = 1.2;
+          bgCtx.stroke();
+        }
+      }
+      requestAnimationFrame(animateBg);
+    }
+    animateBg();
+
+    // 5. Interactive Cyber Terminal
+    const termBody = document.getElementById('term-body');
+    const termInput = document.getElementById('term-input');
+
+    const termCommands = {
+      help: `Commandes disponibles :
+  • whoami     → Profil & objectif d'alternance Pentest (Sept. 2027)
+  • projects   → Liste des projets techniques (C99, POSIX, Python, Homelab)
+  • skills     → Synthèse des compétences techniques
+  • nmap       → Scan de démonstration de l'architecture Homelab
+  • valgrind   → Rapport d'audit mémoire C99 (OCR Solver & Minimake)
+  • contact    → Coordonnées directes de Guilhem Fourrey
+  • clear      → Effacer le terminal`,
+      whoami: `Guilhem FOURREY — Étudiant Ingénieur à l'EPITA Toulouse (Promo 2030, S3)
+Objectif : Alternance de 3 ans en Pentest / Sécurité Offensive dès Septembre 2027.
+Points forts : Programmation bas niveau (C99, POSIX, ASM 68000), Réseau TCP/IP, Homelab Debian, esprit d'équipe forgé par le Rugby et l'industrie (SAREM).`,
+      projects: `[1] OCR Word Search Solver (C99, EPITA S3)   — Recherche 8 directions, Réseau de neurones, 0 fuite Valgrind
+[2] The Journey to Laputa (C99, EPITA S3)    — Threads POSIX, Mutexes, CondVars, Sémaphores, CMake
+[3] Minimake (C99 POSIX, EPITA S2)           — Graphe DAG, fork/execvp/waitpid, stat
+[4] SMILE (Python/Pygame, 8 741 lignes)      — Jeu 2D coopératif, sockets TCP/JSON temps réel
+[5] Homelab Debian & TryHackMe/Root-Me       — Docker durci, VPN WireGuard/Tailscale, Write-ups Obsidian`,
+      skills: `[Sécurité Offensive] TryHackMe, Root-Me, Nmap, Wireshark, Burp Suite, OWASP Top 10, Privesc, Corruptions mémoire
+[Systèmes & Réseau]  Linux Debian, POSIX, Processus/Threads, TCP/IP, Sockets, Docker, WireGuard / Tailscale
+[Développement]      C (C99), Assembleur Motorola 68000, Python (POO/Réseau), OCaml, Bash, SQL, Git, Valgrind, CMake`,
+      nmap: `Starting Nmap 7.95 ( https://nmap.org ) at 2026-11-09 CET
+Nmap scan report for homelab-debian.tailnet (100.104.22.18)
+Host is up (0.0021s latency).
+PORT      STATE  SERVICE       VERSION
+22/tcp    open   ssh           OpenSSH 9.7p1 Debian (Key-Auth Only, Root Disabled)
+51820/udp open   wireguard     WireGuard Mesh VPN (ChaCha20-Poly1305)
+0 ports WAN exposés — Surface d'attaque externe : ZERO-TRUST VALIDATED.`,
+      valgrind: `==42108== Memcheck, a memory error detector
+==42108== Command: ./solver grid_s3.txt PENTEST
+==42108== HEAP SUMMARY:
+==42108==     in use at exit: 0 bytes in 0 blocks
+==42108==   total heap usage: 48 allocs, 48 frees, 14,320 bytes allocated
+==42108== All heap blocks were freed -- no leaks are possible
+==42108== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)`,
+      contact: `Courriel  : guilhem.fourrey@epita.fr
+Téléphone : 06 13 21 21 28
+GitHub    : https://github.com/guilhemfo
+Lieu      : Toulouse & Bayonne`
+    };
+
+    function runTerminalCmd(raw) {
+      const cmd = raw.trim().toLowerCase();
+      if (!cmd) return;
+      if (cmd === 'clear') {
+        termBody.innerHTML = '';
+        return;
+      }
+      const linePrompt = document.createElement('div');
+      linePrompt.className = 'term-line';
+      linePrompt.innerHTML = `<span class="term-prompt">guilhem@epita</span>:<span class="term-path">~</span>$ ${ raw }`;
+      termBody.appendChild(linePrompt);
+
+      const lineOut = document.createElement('div');
+      lineOut.className = 'term-line term-output';
+      lineOut.textContent = termCommands[cmd] || `zsh: commande introuvable: ${cmd}. Tapez 'help' pour voir les commandes.`;
+      termBody.appendChild(lineOut);
+      termBody.scrollTop = termBody.scrollHeight;
+    }
+
+    termInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        runTerminalCmd(termInput.value);
+        termInput.value = '';
+      }
+    });
+
+    // Run initial command in terminal
+    runTerminalCmd('whoami');
+
+    // 6. Interactive Live OCR Word Search Solver Demo
+    const ocrMatrix = [
+      "P E N T E S T K R M",
+      "X L I N U X V E A C",
+      "Q W E R T Y U R S I",
+      "S O C K E T B N M P",
+      "P A Z U D O R E H H",
+      "O C A M L G C L C E",
+      "S H E E T A V B N R",
+      "I E P I T A X Z Q W",
+      "X C V B N M L K J H",
+      "T H R E A D S F G D"
+    ].map(r => r.split(' '));
+
+    const ocrGridEl = document.getElementById('ocr-grid');
+    const ocrCoordsEl = document.getElementById('ocr-coords');
+
+    function renderOcrGrid() {
+      ocrGridEl.innerHTML = '';
+      for (let r = 0; r < 10; r++) {
+        for (let c = 0; c < 10; c++) {
+          const cell = document.createElement('div');
+          cell.className = 'ocr-cell';
+          cell.id = `cell-${r}-${c}`;
+          cell.textContent = ocrMatrix[r][c];
+          ocrGridEl.appendChild(cell);
+        }
+      }
+    }
+    renderOcrGrid();
+
+    const dirs = [
+      [-1,-1], [-1,0], [-1,1],
+      [0,-1],          [0,1],
+      [1,-1],  [1,0],  [1,1]
+    ];
+
+    function solveWord(word) {
+      document.querySelectorAll('.ocr-cell').forEach(el => {
+        el.classList.remove('scanning', 'found');
+      });
+
+      let pathFound = null;
+      for (let r = 0; r < 10 && !pathFound; r++) {
+        for (let c = 0; c < 10 && !pathFound; c++) {
+          if (ocrMatrix[r][c] !== word[0]) continue;
+          for (const [dr, dc] of dirs) {
+            const coords = [];
+            let ok = true;
+            for (let k = 0; k < word.length; k++) {
+              const nr = r + dr * k, nc = c + dc * k;
+              if (nr < 0 || nr >= 10 || nc < 0 || nc >= 10 || ocrMatrix[nr][nc] !== word[k]) {
+                ok = false;
+                break;
+              }
+              coords.push([nr, nc]);
+            }
+            if (ok) {
+              pathFound = coords;
+              break;
+            }
+          }
+        }
+      }
+
+      if (pathFound) {
+        const [sr, sc] = pathFound[0];
+        const [er, ec] = pathFound[pathFound.length - 1];
+        ocrCoordsEl.textContent = `(${sc},${sr})(${ec},${er})`;
+        pathFound.forEach(([r, c], idx) => {
+          setTimeout(() => {
+            const cell = document.getElementById(`cell-${r}-${c}`);
+            if (cell) cell.classList.add('found');
+          }, idx * 75);
+        });
+      }
+    }
+    setTimeout(() => solveWord('PENTEST'), 600);
+
+    // 7. Interactive Minimake DAG Simulation
+    function runDagSimulation() {
+      const status = document.getElementById('dag-status');
+      for (let i = 0; i <= 6; i++) {
+        document.getElementById(`dag-${i}`).classList.remove('active');
+      }
+      const steps = [
+        { ids: [0, 1, 2], msg: "1/3 : Vérification stat(2) des sources parse.c, graph.c, exec.c..." },
+        { ids: [3, 4, 5], msg: "2/3 : fork() + execvp('gcc -c') → compilation des fichiers objets .o..." },
+        { ids: [6], msg: "3/3 : waitpid() == 0 → Édition des liens réussie : ./minimake prêt !" }
+      ];
+      steps.forEach((st, idx) => {
+        setTimeout(() => {
+          status.textContent = st.msg;
+          st.ids.forEach(id => document.getElementById(`dag-${id}`).classList.add('active'));
+        }, idx * 700);
+      });
+    }
+
+    // 8. Filterable Skills Data & Renderer
+    const skillsData = [
+      { name: "Langage C (C99) & Gestion Mémoire", level: "Solide (EPITA S1-S3)", pct: 90, cat: "dev", proof: "Preuves : OCR Solver, Minimake, Laputa, 0 fuite Valgrind" },
+      { name: "Threads POSIX & Synchronisation", level: "Avancé (EPITA S3)", pct: 86, cat: "sys", proof: "Preuves : Mutexes, CondVars, Sémaphores (The Journey to Laputa)" },
+      { name: "Linux (Debian) & Administration CLI", level: "Confirmé", pct: 88, cat: "sys", proof: "Preuves : Homelab Debian, Bash/Zsh, permissions POSIX, services" },
+      { name: "Pentest & Reconnaissance Réseau", level: "Apprenti Opérationnel", pct: 78, cat: "cyber", proof: "Preuves : TryHackMe, Root-Me, Nmap, Wireshark, Burp Suite, OWASP" },
+      { name: "Python 3 (POO & Sockets TCP/JSON)", level: "Solide", pct: 88, cat: "dev", proof: "Preuves : Projet SMILE (8 741 lignes, serveur/client temps réel)" },
+      { name: "Assembleur Motorola 68000", level: "Bases Solides (S3)", pct: 76, cat: "dev", proof: "Preuves : Registres, UAL, pile d'exécution (call stack) et adressage" },
+      { name: "Docker & Réseau VPN WireGuard", level: "Confirmé", pct: 84, cat: "cyber", proof: "Preuves : Isolation conteneurs non-root & mesh VPN Tailscale/WireGuard" },
+      { name: "Git, CMake, GNU Make & Obsidian", level: "Quotidien", pct: 92, cat: "sys", proof: "Preuves : Travail d'équipe Git, CMakeLists, base de write-ups Obsidian" }
+    ];
+
+    function renderSkills(filter = 'all') {
+      const container = document.getElementById('skills-container');
+      container.innerHTML = '';
+      skillsData
+        .filter(s => filter === 'all' || s.cat === filter)
+        .forEach(s => {
+          const div = document.createElement('div');
+          div.className = 'skill-item';
+          div.innerHTML = `
+            <div class="skill-top">
+              <span class="skill-name">${s.name}</span>
+              <span class="skill-level">${s.level}</span>
+            </div>
+            <div class="skill-bar-bg">
+              <div class="skill-bar-fill" style="width: ${s.pct}%"></div>
+            </div>
+            <div class="skill-proof">${s.proof}</div>
+          `;
+          container.appendChild(div);
+        });
+    }
+
+    function filterSkills(cat, btn) {
+      document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderSkills(cat);
+    }
+    renderSkills();
+
+    // 9. Interactive Force-Directed Obsidian Knowledge Graph
+    const kCanvas = document.getElementById('knowledge-canvas');
+    const kCtx = kCanvas.getContext('2d');
+
+    const kNodes = [
+      { id: 0, label: "Pentest & Audit", x: 360, y: 190, r: 24, color: "#00f5d4",
+        desc: "Méthodologie structurée d'audit : reconnaissance active/passive (Nmap), analyse Web (OWASP Top 10, Burp Suite), élévation de privilèges Linux/Windows et rédaction de write-ups.",
+        tags: ["#TryHackMe", "#Root-Me", "#OWASP", "#PASSI"] },
+      { id: 1, label: "C99 & Mémoire", x: 200, y: 100, r: 19, color: "#38bdf8",
+        desc: "Maîtrise de l'allocation dynamique (malloc, free, realloc), détection des corruptions mémoire (buffer overflow, use-after-free) et audit systématique sous Valgrind.",
+        tags: ["#C99", "#Valgrind", "#MemorySafety", "#Pointers"] },
+      { id: 2, label: "POSIX & Threads", x: 520, y: 105, r: 19, color: "#38bdf8",
+        desc: "Ordonnancement de processus (fork, execvp, waitpid) et programmation concurrente multithreadée (pthread_mutex, pthread_cond_timedwait, sem_t).",
+        tags: ["#POSIX", "#Pthreads", "#Minimake", "#Laputa"] },
+      { id: 3, label: "ASM 68000", x: 165, y: 265, r: 18, color: "#a855f7",
+        desc: "Analyse bas niveau du processeur Motorola 68000 : fonctionnement de l'UAL, manipulation des registres de données/adresses et structure de la pile d'exécution (Call Stack).",
+        tags: ["#ReverseEngineering", "#68000", "#Stack", "#Registres"] },
+      { id: 4, label: "Réseau TCP/IP", x: 545, y: 270, r: 19, color: "#10b981",
+        desc: "Conception de protocoles applicatifs sur sockets TCP (projet SMILE), encapsulation JSON, gestion de la fragmentation et analyse de flux sous Wireshark.",
+        tags: ["#Sockets", "#TCP_IP", "#Wireshark", "#SMILE"] },
+      { id: 5, label: "Homelab Debian", x: 360, y: 65, r: 18, color: "#f59e0b",
+        desc: "Serveur Debian 12 auto-hébergé, isolation de services par conteneurs Docker non-root et administration distante via VPN maillé chiffré WireGuard / Tailscale.",
+        tags: ["#Debian", "#Docker", "#WireGuard", "#Hardening"] },
+      { id: 6, label: "Éthique & Rigueur", x: 360, y: 320, r: 18, color: "#f43f5e",
+        desc: "Respect scrupuleux du cadre légal, sécurité opérationnelle héritée du milieu industriel (SAREM) et solidarité collective forgée par le Rugby en club.",
+        tags: ["#Déontologie", "#SAREM", "#Rugby", "#EspritÉquipe"] }
+    ];
+
+    const kEdges = [
+      [0,1], [0,2], [0,3], [0,4], [0,5], [0,6],
+      [1,2], [1,3], [2,5], [4,5], [2,4]
+    ];
+
+    let selectedNode = kNodes[0];
+    let draggedNode = null;
+
+    function selectKNode(node) {
+      selectedNode = node;
+      document.getElementById('node-title').textContent = node.label;
+      document.getElementById('node-body').textContent = node.desc;
+      const tagsEl = document.getElementById('node-tags');
+      tagsEl.innerHTML = node.tags.map(t => `<span class="tech-pill">${t}</span>`).join('');
+    }
+
+    kCanvas.addEventListener('mousedown', (e) => {
+      const rect = kCanvas.getBoundingClientRect();
+      const scaleX = kCanvas.width / rect.width;
+      const scaleY = kCanvas.height / rect.height;
+      const mx = (e.clientX - rect.left) * scaleX;
+      const my = (e.clientY - rect.top) * scaleY;
+
+      for (const n of kNodes) {
+        if (Math.hypot(mx - n.x, my - n.y) <= n.r + 8) {
+          draggedNode = n;
+          selectKNode(n);
+          break;
+        }
+      }
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!draggedNode) return;
+      const rect = kCanvas.getBoundingClientRect();
+      const scaleX = kCanvas.width / rect.width;
+      const scaleY = kCanvas.height / rect.height;
+      draggedNode.x = Math.max(40, Math.min(kCanvas.width - 40, (e.clientX - rect.left) * scaleX));
+      draggedNode.y = Math.max(35, Math.min(kCanvas.height - 35, (e.clientY - rect.top) * scaleY));
+    });
+
+    window.addEventListener('mouseup', () => {
+      draggedNode = null;
+    });
+
+    let kTick = 0;
+    function drawKnowledgeGraph() {
+      kTick += 0.02;
+      kCtx.clearRect(0, 0, kCanvas.width, kCanvas.height);
+
+      // Draw edges
+      for (const [i, j] of kEdges) {
+        const a = kNodes[i], b = kNodes[j];
+        const isActive = (selectedNode === a || selectedNode === b);
+        kCtx.beginPath();
+        kCtx.moveTo(a.x, a.y);
+        kCtx.lineTo(b.x, b.y);
+        kCtx.strokeStyle = isActive ? 'rgba(0, 245, 212, 0.65)' : 'rgba(148, 163, 184, 0.22)';
+        kCtx.lineWidth = isActive ? 2 : 1.2;
+        kCtx.stroke();
+      }
+
+      // Draw nodes
+      for (const n of kNodes) {
+        const pulse = (selectedNode === n) ? Math.sin(kTick * 2.5) * 3 : 0;
+        if (selectedNode === n) {
+          kCtx.beginPath();
+          kCtx.arc(n.x, n.y, n.r + 8 + pulse, 0, Math.PI * 2);
+          kCtx.fillStyle = 'rgba(0, 245, 212, 0.14)';
+          kCtx.fill();
+        }
+
+        kCtx.beginPath();
+        kCtx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+        kCtx.fillStyle = '#0b1325';
+        kCtx.fill();
+        kCtx.lineWidth = selectedNode === n ? 3 : 2;
+        kCtx.strokeStyle = n.color;
+        kCtx.stroke();
+
+        kCtx.fillStyle = '#f1f5f9';
+        kCtx.font = '600 11px "JetBrains Mono", monospace';
+        kCtx.textAlign = 'center';
+        kCtx.fillText(n.label, n.x, n.y + n.r + 16);
+      }
+
+      requestAnimationFrame(drawKnowledgeGraph);
+    }
+    drawKnowledgeGraph();
+  </script>
+</body>
+</html>
